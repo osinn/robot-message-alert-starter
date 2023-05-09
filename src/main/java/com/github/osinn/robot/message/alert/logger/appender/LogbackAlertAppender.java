@@ -12,8 +12,10 @@ import com.github.osinn.robot.message.alert.utils.RobotHelp;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -29,17 +31,36 @@ public class LogbackAlertAppender extends AppenderBase<ILoggingEvent> {
 
     private RateLimiter limiter;
 
+    private static int stackContentLength;
+
+    public void setLoggingAlertAppenderConfigProperties(LoggerAlertAppenderConfigProperties loggingAlertAppenderConfigProperties) {
+        this.loggingAlertAppenderConfigProperties = loggingAlertAppenderConfigProperties;
+        stackContentLength = loggingAlertAppenderConfigProperties.getLimitStackContentLength();
+    }
 
     @Override
     protected void append(ILoggingEvent event) {
         if (!loggingAlertAppenderConfigProperties.getAlertLevel().contains(event.getLevel())) {
             return;
         }
-        if (loggingAlertAppenderConfigProperties.getExcludeThrowableClasses() != null && event.getThrowableProxy() != null && event.getThrowableProxy().getClassName().contains(loggingAlertAppenderConfigProperties.getExcludeThrowableClasses())) {
-            return;
+        List<String> excludeThrowableClasses = loggingAlertAppenderConfigProperties.getExcludeThrowableClasses();
+        List<String> excludePackages = loggingAlertAppenderConfigProperties.getExcludePackage();
+        if (loggingAlertAppenderConfigProperties.getExcludeThrowableClasses() != null && event.getThrowableProxy() != null && excludeThrowableClasses != null) {
+            String className = event.getThrowableProxy().getClassName();
+            for (String excludeThrowableClass : excludeThrowableClasses) {
+                if (className.contains(excludeThrowableClass)) {
+                    return;
+                }
+            }
         }
-        if (loggingAlertAppenderConfigProperties.getExcludePackage() != null && event.getLoggerName().contains(loggingAlertAppenderConfigProperties.getExcludePackage())) {
-            return;
+
+        if (loggingAlertAppenderConfigProperties.getExcludePackage() != null && excludePackages != null) {
+            String loggerName = event.getLoggerName();
+            for (String excludePackage : excludePackages) {
+                if (loggerName.contains(excludePackage)) {
+                    return;
+                }
+            }
         }
         String loggerName = event.getLoggerName();
         String message = event.getFormattedMessage();
@@ -67,6 +88,22 @@ public class LogbackAlertAppender extends AppenderBase<ILoggingEvent> {
                 RobotHelp.sendDingTalkWebHookRobotMessage(loggerName, message, throwable, traceId, loggingAlertAppenderConfigProperties);
             }
         });
+    }
 
+    /**
+     * 限制文本描述
+     *
+     * @param content    内容或问题
+     * @return
+     */
+    public static String limitStackContentLength(String content) {
+        if (StringUtils.isNotBlank(content)) {
+            if (content.length() > stackContentLength) {
+                return content.substring(0, stackContentLength);
+            } else {
+                return content;
+            }
+        }
+        return "";
     }
 }

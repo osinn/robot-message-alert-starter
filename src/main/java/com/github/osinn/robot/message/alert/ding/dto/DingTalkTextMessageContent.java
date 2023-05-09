@@ -1,7 +1,6 @@
 package com.github.osinn.robot.message.alert.ding.dto;
 
-import com.github.osinn.robot.message.alert.utils.RobotHelp;
-import com.github.osinn.robot.message.alert.wx.dto.WxMarkdownMessageElement;
+import com.github.osinn.robot.message.alert.logger.appender.LogbackAlertAppender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +30,7 @@ public class DingTalkTextMessageContent {
             for (DingTalkTextMessageElement wxMarkdownMessageElement : text) {
                 str.append(wxMarkdownMessageElement.getContent()).append("  \n  ");
             }
-            return RobotHelp.limitStrNone(str.toString(), 1096);
+            return LogbackAlertAppender.limitStackContentLength(str.toString());
         }
     }
 

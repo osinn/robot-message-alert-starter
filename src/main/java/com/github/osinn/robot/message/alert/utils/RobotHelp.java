@@ -139,22 +139,4 @@ public class RobotHelp {
 
         HttpUtils.sendHttpRequest(String.format(RobotType.DING_TALK.getRobotUrl(), loggingAlertAppenderConfigProperties.getToken(), timestamp, sign), JSONUtil.toJsonStr(dingTalkMessage));
     }
-
-    /**
-     * 限制文本描述
-     *
-     * @param content    内容或问题
-     * @param charNumber 长度
-     * @return
-     */
-    public static String limitStrNone(String content, int charNumber) {
-        if (StringUtils.isNotBlank(content)) {
-            if (content.length() > charNumber) {
-                return content.substring(0, charNumber);
-            } else {
-                return content;
-            }
-        }
-        return "";
-    }
 }

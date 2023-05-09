@@ -57,17 +57,22 @@ public class LoggerAlertAppenderConfigProperties {
     /**
      * 排除的异常类集合用逗号分隔
      */
-    private String excludeThrowableClasses;
+    private List<String> excludeThrowableClasses;
 
     /**
      * 排除的包用逗号分隔
      */
-    private String excludePackage;
+    private List<String> excludePackage;
 
     /**
      * 基于guava限流配置
      */
     private Limiter limiter;
+
+    /**
+     * 限制异常栈内容长度
+     */
+    private int limitStackContentLength = 500;
 
     @Data
     public static class Limiter {

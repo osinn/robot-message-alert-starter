@@ -25,6 +25,7 @@ robot:
       secret: 签名密钥(可选，安全设置签名效验必须要配置)
       # 机器人token，对应平台Webhook 地址token或key
       token: 钉钉token
+      limit-stack-content-length: 500 # 异常栈信息长度
       # 基于guava限流配置
       limiter:
         acquire: 1
