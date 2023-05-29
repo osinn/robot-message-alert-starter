@@ -6,7 +6,7 @@
 <dependency>
     <groupId>io.github.osinn</groupId>
     <artifactId>robot-message-alert-starter</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
